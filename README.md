@@ -1,4 +1,4 @@
-# hello-world
+# Github get commits data task
 
 ## Project setup
 ```

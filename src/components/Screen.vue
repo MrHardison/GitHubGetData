@@ -18,8 +18,8 @@
 			</button>
 			<div class="error">{{errorMessage}}</div>
 		</form>
-		<div class="table-responsive">
-			<table class="table table-bordered table-hover table-striped" v-if="!showTable">
+		<div class="table-responsive" v-show="showTable">
+			<table class="table table-bordered table-hover table-striped">
 				<tr>
 					<th>Sha</th>
 					<th>Url</th>
@@ -40,11 +40,43 @@
 				</template>
 			</table>
 		</div>
+		<div class="info-modal" :class="{visible: showModal}">
+			<div class="close" @click="showModal = false">x</div>
+			<div class="title">
+				About commit
+			</div>
+			<div class="line">
+				<div class="text">Author</div>
+				<div class="value">{{subInfo ? subInfo.commit.author.name : ''}}</div>
+			</div>
+			<div class="line">
+				<div class="text">Id</div>
+				<div class="value">{{subInfo ? subInfo.author.id : ''}}</div>
+			</div>
+			<div class="line">
+				<div class="text">Url</div>
+				<div class="value">{{subInfo ? subInfo.commit.url : ''}}</div>
+			</div>
+			<div class="line">
+				<div class="text">Additions</div>
+				<div class="value">{{subInfo ? subInfo.stats.additions : ''}}</div>
+			</div>
+			<div class="line">
+				<div class="text">Deletions</div>
+				<div class="value">{{subInfo ? subInfo.stats.deletions : ''}}</div>
+			</div>
+			<div class="line">
+				<div class="text">Total</div>
+				<div class="value">{{subInfo ? subInfo.stats.total : ''}}</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 	import axios from 'axios'
+	import Modal from './modal'
+	
 	export default {
 		name: 'Screen',
 		data() {
@@ -52,11 +84,13 @@
 				name: '',
 				repository: '',
 				pattern: /^[a-zA-Z]{4,30}$/,
-				showTable: false,
 				commits: null,
 				errorMessage: '',
+				subInfo: null,
 				nameError: '',
-				repoError: ''
+				repoError: '',
+				showTable: false,
+				showModal: false
 			}
 		},
 		methods: {
@@ -90,13 +124,18 @@
 			},
 			showData(response) {
 				this.commits = response
+				this.showTable = true
 			},
 			showError(error) {
 				this.errorMessage = error
 			},
 			viewMore(index) {
 				axios.get('https://api.github.com/repos/' + this.name + '/' + this.repository + '/commits/' + this.commits[index].sha)
-				.then(response => console.log('response.data: ', response.data))
+				.then(response => {
+					console.log('response.data: ', response.data)
+					this.subInfo = response.data
+					this.showModal = true
+				})
 				.catch(error => this.showError(error.response.data.message))
 			}
 		}
@@ -111,6 +150,9 @@ body {
 }
 .page {
 	margin: 0 auto;
+	padding: 50px 0;
+	position: relative;
+	height: 100vh;
 }
 .page__form {
 	display: inline-block;
@@ -155,5 +197,55 @@ th {
 td {
 	max-width: 30%;
 	vertical-align: middle;
+}
+.info-modal {
+	box-shadow: 0 2px 50px 0 rgba(0,0,0,.2);
+	background: #fff;
+	border-radius: 5px;
+	box-sizing: border-box;
+	padding: 30px;
+	left: 50%;
+	opacity: 0;
+	transition: opacity .5s;
+	position: absolute;
+	top: 0;
+	text-align: left;
+	transform: translate(-50%, 50%);
+	width: 500px;
+	z-index: -1;
+}
+.info-modal .close {
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	cursor: pointer;
+	font-size: 20px;
+}
+.info-modal .title {
+	text-align: center;
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+.info-modal .line {
+	padding: 10px 0;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.info-modal .line:last-child {
+	border-bottom: none;
+}
+.info-modal .line .text {
+	font-size: 12px;
+	text-transform: uppercase;
+}
+.info-modal .line .value {
+	font-size: 14px;
+	font-weight: 700;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.info-modal.visible {
+	opacity: 1;
+	z-index: 2;
 }
 </style>

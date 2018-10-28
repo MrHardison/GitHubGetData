@@ -1,25 +1,24 @@
 <template>
-  <div id="app">
-    <Screen/>
-  </div>
+	<div id="app">
+		<Screen/>
+	</div>
 </template>
 
 <script>
-import Screen from './components/Screen.vue'
+	import Screen from './components/Screen.vue'
 
-export default {
-  name: 'app',
-  components: { Screen }
-}
+	export default {
+	name: 'app',
+	components: { Screen }
+	}
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+	#app {
+		font-family: 'Avenir', Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		color: #2c3e50;
+	}
 </style>

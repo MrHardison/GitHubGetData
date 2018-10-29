@@ -83,7 +83,7 @@
 			return {
 				name: '',
 				repository: '',
-				pattern: /^[a-zA-Z]{4,30}$/,
+				pattern: /^[a-zA-Z\.\-\_]{4,30}$/,
 				commits: null,
 				errorMessage: '',
 				subInfo: null,
@@ -132,7 +132,6 @@
 			viewMore(index) {
 				axios.get('https://api.github.com/repos/' + this.name + '/' + this.repository + '/commits/' + this.commits[index].sha)
 				.then(response => {
-					console.log('response.data: ', response.data)
 					this.subInfo = response.data
 					this.showModal = true
 				})
